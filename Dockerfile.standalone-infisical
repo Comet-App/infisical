@@ -16,7 +16,7 @@ WORKDIR /app
 
 # Copy dependencies
 COPY --from=frontend-dependencies /app/node_modules ./node_modules
-# Copy all files 
+# Copy all files
 COPY /frontend .
 
 ENV NODE_ENV production
@@ -48,7 +48,8 @@ ARG INTERCOM_ID
 ENV NEXT_PUBLIC_INTERCOM_ID=$INTERCOM_ID \
   BAKED_NEXT_PUBLIC_INTERCOM_ID=$INTERCOM_ID
 
-COPY --chown=nextjs:nodejs --chmod=555 frontend/scripts ./scripts
+# COPY --chown=nextjs:nodejs --chmod=555 frontend/scripts ./scripts
+COPY --chown=nextjs:nodejs frontend/scripts ./scripts
 COPY --from=frontend-builder /app/public ./public
 RUN chown nextjs:nodejs ./public/data
 COPY --from=frontend-builder --chown=nextjs:nodejs /app/.next/standalone ./
@@ -84,7 +85,7 @@ COPY --from=backend-build /app .
 # Production stage
 FROM node:16-alpine AS production
 
-WORKDIR / 
+WORKDIR /
 
 # Install PM2
 RUN npm install -g pm2
@@ -100,8 +101,6 @@ COPY --from=backend-runner /app /backend
 COPY --from=frontend-runner /app/ /app/
 
 EXPOSE 80
-ENV HTTPS_ENABLED false 
+ENV HTTPS_ENABLED false
 
 CMD ["pm2-runtime", "start", "ecosystem.config.js"]
-
-
