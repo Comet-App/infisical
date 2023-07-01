@@ -2,6 +2,7 @@ version: "3"
 
 services:
   infisical-standalone:
+    image: shivysesui/infisical:0.13.0
     container_name: infisical-standalone
     build:
       context: .
